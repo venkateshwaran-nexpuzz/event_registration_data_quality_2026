@@ -14,6 +14,5 @@
  *   and Netlify will transparently proxy /api/* to your Python backend!
  */
 window.DATAWISE_CONFIG = {
-  // Set your deployed backend URL here if deploying frontend to Netlify:
-  apiBaseUrl: ''
+  apiBaseUrl: 'https://datawise-backend-bd1p.onrender.com'
 };
