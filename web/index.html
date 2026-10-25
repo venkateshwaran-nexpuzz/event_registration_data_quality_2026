@@ -1,0 +1,814 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DataWise | Event Registration Data Quality Hub</title>
+  <meta name="description" content="Production-grade Event Registration Data Quality Platform: Automated deduplication, contact syntax validation, and ticketing readiness audits.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <!-- Application Container -->
+  <div class="app-layout">
+
+    <!-- Left Navigation Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="logo">
+          <span class="logo-icon">✦</span>
+          <span class="logo-sub">G11</span>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">DATAWISE</span>
+          <span class="brand-team">EVENT QUALITY HUB</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <span class="sidebar-heading">NAVIGATION</span>
+        <nav class="nav-links">
+          <a class="nav-item active" href="#overview" id="nav-overview">
+            <span class="nav-icon">▦</span>
+            <span class="nav-label">Overview</span>
+          </a>
+          <a class="nav-item" href="#events-section" id="nav-events">
+            <span class="nav-icon">🎪</span>
+            <span class="nav-label">Event Health</span>
+          </a>
+          <a class="nav-item" href="#dimensions-section" id="nav-dimensions">
+            <span class="nav-icon">🎯</span>
+            <span class="nav-label">Quality Checks</span>
+          </a>
+          <a class="nav-item" href="#records" id="nav-records">
+            <span class="nav-icon">▤</span>
+            <span class="nav-label">Data Explorer</span>
+          </a>
+          <a class="nav-item" href="#exports" id="nav-exports">
+            <span class="nav-icon">📥</span>
+            <span class="nav-label">Exports</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="sidebar-section">
+        <span class="sidebar-heading">QUICK FILTERS</span>
+        <div class="sidebar-quick-filters">
+          <button class="quick-chip active" data-filter-type="all">All Records <span class="badge" id="side-total-badge">—</span></button>
+          <button class="quick-chip green" data-filter-type="clean">Clean <span class="badge" id="side-clean-badge">—</span></button>
+          <button class="quick-chip amber" data-filter-type="review">Review <span class="badge" id="side-review-badge">—</span></button>
+          <button class="quick-chip red" data-filter-type="invalid">Invalid <span class="badge" id="side-invalid-badge">—</span></button>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <!-- Theme Switcher in Sidebar -->
+        <div class="theme-switch-wrapper">
+          <span class="theme-switch-label">Theme</span>
+          <button class="theme-toggle-btn" id="themeToggleSidebar" aria-label="Toggle Light and Dark Mode" title="Toggle Theme">
+            <span class="theme-icon light-icon">☀️</span>
+            <span class="theme-icon dark-icon">🌙</span>
+            <span class="theme-text" id="themeSidebarText">Dark Luxe</span>
+          </button>
+        </div>
+
+        <div class="profile-card">
+          <div class="profile-avatar">TT</div>
+          <div class="profile-info">
+            <strong class="profile-name">Tech Titans</strong>
+            <span class="profile-role">Event Ops · Python Engine</span>
+          </div>
+          <span class="status-dot-pulse" title="System Online"></span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Top Sticky Navigation Bar -->
+      <header class="top-header">
+        <div class="header-left">
+          <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation">☰</button>
+          <div class="breadcrumbs">
+            <span class="crumb-root">DataWise</span>
+            <span class="crumb-sep">/</span>
+            <span class="crumb-current" id="currentCrumb">Event Registration Quality</span>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="system-status-pill">
+            <span class="live-dot"></span>
+            <span class="status-text">Engine Ready</span>
+          </div>
+
+          <!-- Header Theme Switcher -->
+          <button class="theme-toggle-header" id="themeToggleHeader" aria-label="Switch Theme" title="Toggle Light / Dark Mode">
+            <span class="toggle-track">
+              <span class="toggle-indicator">
+                <span class="toggle-sun">☀️</span>
+                <span class="toggle-moon">🌙</span>
+              </span>
+            </span>
+            <span class="toggle-text" id="headerThemeText">Dark</span>
+          </button>
+
+          <button class="btn-header-action" id="headerRunBtn">
+            <span class="btn-icon">▶</span>
+            <span>Run Audit</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="content-body">
+
+        <!-- Hero / Command Center Banner -->
+        <section class="hero-banner" id="overview">
+          <div class="hero-backdrop"></div>
+          <div class="hero-content">
+            <div class="hero-badge">
+              <span class="badge-spark">✦</span>
+              <span>EVENT REGISTRATION DATA QUALITY INTELLIGENCE</span>
+            </div>
+            <h1 class="hero-title">
+              Flawless Event Data.<br>
+              <span class="gradient-text">Zero Gate Surprises.</span>
+            </h1>
+            <p class="hero-description">
+              Detect duplicate registrations, validate RFC-compliant email & international phone syntax, and inspect similar attendee candidates before printing badges or sending confirmation emails.
+            </p>
+
+            <div class="hero-actions">
+              <button class="btn btn-primary" id="run">
+                <span class="btn-spinner" id="runSpinner"></span>
+                <span class="btn-icon">▶</span>
+                <span id="runBtnText">Run Quality Audit</span>
+              </button>
+              
+              <label class="btn btn-secondary upload-label" for="file">
+                <span class="btn-icon">↑</span>
+                <span>Upload Registrations CSV</span>
+                <input id="file" type="file" accept=".csv">
+              </label>
+
+              <button class="btn btn-glass btn-danger-hover" id="clearBtn" title="Clear all loaded registration records">
+                <span class="btn-icon">🗑️</span>
+                <span>Clear Records</span>
+              </button>
+
+              <button class="btn btn-glass" id="sample320Btn" title="Load your 320 uploaded records">
+                <span class="btn-icon">📁</span>
+                <span>Load 320 Records</span>
+              </button>
+
+              <button class="btn btn-glass" id="templateBtn" title="Download sample CSV template">
+                <span class="btn-icon">📥</span>
+                <span>CSV Template</span>
+              </button>
+            </div>
+
+            <div class="hero-meta">
+              <span class="meta-item">
+                <span class="meta-dot"></span>
+                <span>Local-first Python processing</span>
+              </span>
+              <span class="meta-item">
+                <span class="meta-bullet">•</span>
+                <span>Zero cloud latency</span>
+              </span>
+              <span class="meta-item">
+                <span class="meta-bullet">•</span>
+                <span id="lastUpdatedMeta">Awaiting initial run</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Hero Floating Health Widget -->
+          <div class="hero-widget">
+            <div class="widget-card glass-panel">
+              <div class="widget-header">
+                <span class="widget-subtitle">DATA READINESS</span>
+                <span class="widget-status-badge" id="heroLiveBadge">LIVE AUDIT</span>
+              </div>
+              <div class="widget-score-row">
+                <div class="widget-score" id="heroCleanScore">--<span class="percent-sign">%</span></div>
+                <div class="widget-grade-badge" id="heroGradeBadge">Grade --</div>
+              </div>
+              <div class="widget-progress">
+                <div class="widget-progress-bar" id="heroProgressBar" style="width: 0%"></div>
+              </div>
+              <div class="widget-stats-grid">
+                <div class="wstat">
+                  <span class="wstat-val" id="heroCleanVal">—</span>
+                  <span class="wstat-label">Clean</span>
+                </div>
+                <div class="wstat">
+                  <span class="wstat-val amber" id="heroReviewVal">—</span>
+                  <span class="wstat-label">Review</span>
+                </div>
+                <div class="wstat">
+                  <span class="wstat-val red" id="heroInvalidVal">—</span>
+                  <span class="wstat-label">Invalid</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Stat Counter Cards -->
+        <section class="stats-overview-grid">
+          <div class="stat-card" data-filter="all">
+            <div class="stat-header">
+              <span class="stat-title">Total Registrations</span>
+              <div class="stat-icon-wrapper purple">▤</div>
+            </div>
+            <div class="stat-number" id="total">—</div>
+            <div class="stat-footer">
+              <span class="stat-badge purple">100% Volume</span>
+              <span class="stat-sub">Imported records</span>
+            </div>
+          </div>
+
+          <div class="stat-card" data-filter="clean">
+            <div class="stat-header">
+              <span class="stat-title">Clean & Verified</span>
+              <div class="stat-icon-wrapper green">✓</div>
+            </div>
+            <div class="stat-number green-text" id="clean">—</div>
+            <div class="stat-footer">
+              <span class="stat-badge green" id="cleanRateBadge">—</span>
+              <span class="stat-sub">Ready for ticketing</span>
+            </div>
+          </div>
+
+          <div class="stat-card" data-filter="review">
+            <div class="stat-header">
+              <span class="stat-title">Review Candidates</span>
+              <div class="stat-icon-wrapper amber">⌕</div>
+            </div>
+            <div class="stat-number amber-text" id="review">—</div>
+            <div class="stat-footer">
+              <span class="stat-badge amber" id="reviewRateBadge">—</span>
+              <span class="stat-sub">Potential duplicates</span>
+            </div>
+          </div>
+
+          <div class="stat-card" data-filter="invalid">
+            <div class="stat-header">
+              <span class="stat-title">Invalid Records</span>
+              <div class="stat-icon-wrapper red">✕</div>
+            </div>
+            <div class="stat-number red-text" id="invalid">—</div>
+            <div class="stat-footer">
+              <span class="stat-badge red" id="invalidRateBadge">—</span>
+              <span class="stat-sub">Missing/broken data</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- COMPONENT 1: Event Breakdown & Operations Matrix -->
+        <section class="component-card" id="events-section">
+          <div class="card-header">
+            <div>
+              <span class="card-eyebrow">EVENT OPERATIONS MATRIX</span>
+              <h2 class="card-heading">Event Registration Health Breakdown</h2>
+              <p class="card-description">Quality metrics broken down by individual conference and workshop tracks.</p>
+            </div>
+            <div class="event-filter-controls">
+              <button class="btn-event-filter active" data-event="all">All Events</button>
+            </div>
+          </div>
+
+          <div class="event-grid" id="eventCardsContainer">
+            <!-- Event cards generated dynamically via app.js -->
+            <div class="event-card-skeleton">
+              <div class="skeleton-line title"></div>
+              <div class="skeleton-line bar"></div>
+            </div>
+            <div class="event-card-skeleton">
+              <div class="skeleton-line title"></div>
+              <div class="skeleton-line bar"></div>
+            </div>
+            <div class="event-card-skeleton">
+              <div class="skeleton-line title"></div>
+              <div class="skeleton-line bar"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- COMPONENT 2: Data Quality Dimensions & Readiness Checklist -->
+        <div class="two-column-grid" id="dimensions-section">
+          
+          <!-- Quality Dimensions Scorecard -->
+          <section class="component-card">
+            <div class="card-header">
+              <div>
+                <span class="card-eyebrow">AUDIT CRITERIA</span>
+                <h2 class="card-heading">Quality Dimensions</h2>
+              </div>
+              <span class="badge-status-pill green" id="dimensionOverallBadge">ISO 25012 Standard</span>
+            </div>
+
+            <div class="dimensions-list">
+              <div class="dimension-item">
+                <div class="dim-top">
+                  <div class="dim-title">
+                    <span class="dim-icon">📋</span>
+                    <strong>Completeness</strong>
+                  </div>
+                  <span class="dim-score" id="dimCompletenessScore">98.8%</span>
+                </div>
+                <div class="dim-bar-wrap">
+                  <div class="dim-bar" id="dimCompletenessBar" style="width: 98.8%"></div>
+                </div>
+                <div class="dim-desc">Checks for missing mandatory fields: Full Name, Email, Phone, Event</div>
+              </div>
+
+              <div class="dimension-item">
+                <div class="dim-top">
+                  <div class="dim-title">
+                    <span class="dim-icon">🎯</span>
+                    <strong>Validity & Syntax</strong>
+                  </div>
+                  <span class="dim-score" id="dimValidityScore">97.8%</span>
+                </div>
+                <div class="dim-bar-wrap">
+                  <div class="dim-bar" id="dimValidityBar" style="width: 97.8%"></div>
+                </div>
+                <div class="dim-desc">Verifies RFC-compliant email domains and standard phone number formatting</div>
+              </div>
+
+              <div class="dimension-item">
+                <div class="dim-top">
+                  <div class="dim-title">
+                    <span class="dim-icon">👥</span>
+                    <strong>Uniqueness</strong>
+                  </div>
+                  <span class="dim-score" id="dimUniquenessScore">94.2%</span>
+                </div>
+                <div class="dim-bar-wrap">
+                  <div class="dim-bar amber" id="dimUniquenessBar" style="width: 94.2%"></div>
+                </div>
+                <div class="dim-desc">Identifies repeated Person IDs and duplicate email registrations</div>
+              </div>
+
+              <div class="dimension-item">
+                <div class="dim-top">
+                  <div class="dim-title">
+                    <span class="dim-icon">🔍</span>
+                    <strong>Similarity & Fuzzy Match</strong>
+                  </div>
+                  <span class="dim-score" id="dimFuzzyScore">11 Pairs</span>
+                </div>
+                <div class="dim-bar-wrap">
+                  <div class="dim-bar blue" id="dimFuzzyBar" style="width: 88%"></div>
+                </div>
+                <div class="dim-desc">SequenceMatcher ratio &ge; 88% flags similar names for manual staff review</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Registration Health Gauge & Event Readiness -->
+          <section class="component-card" id="quality">
+            <div class="card-header">
+              <div>
+                <span class="card-eyebrow">HEALTH VISUALIZER</span>
+                <h2 class="card-heading">Registration Health</h2>
+              </div>
+              <span class="badge-status-pill purple" id="health">Awaiting analysis</span>
+            </div>
+
+            <div class="quality-visual-wrap">
+              <div class="donut-chart-container">
+                <div class="donut" id="donut">
+                  <div class="donut-inner">
+                    <b id="pct">—</b>
+                    <small>clean rate</small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="legend-list">
+                <div class="legend-row">
+                  <div class="legend-label">
+                    <span class="legend-color-dot green"></span>
+                    <span>Clean Registrations</span>
+                  </div>
+                  <b class="legend-val" id="lc">—</b>
+                </div>
+
+                <div class="legend-row">
+                  <div class="legend-label">
+                    <span class="legend-color-dot amber"></span>
+                    <span>Review Candidates</span>
+                  </div>
+                  <b class="legend-val" id="lr">—</b>
+                </div>
+
+                <div class="legend-row">
+                  <div class="legend-label">
+                    <span class="legend-color-dot red"></span>
+                    <span>Invalid Registrations</span>
+                  </div>
+                  <b class="legend-val" id="li">—</b>
+                </div>
+              </div>
+            </div>
+
+            <!-- Operations Readiness Checklist -->
+            <div class="readiness-box">
+              <div class="readiness-title">
+                <span>🎟️ Event Operations Readiness</span>
+              </div>
+              <div class="readiness-grid">
+                <div class="readiness-item" id="readyBadges">
+                  <span class="r-icon">✓</span>
+                  <div class="r-text">
+                    <strong>Badge Printing</strong>
+                    <small id="readyBadgesVal">98% Ready</small>
+                  </div>
+                </div>
+                <div class="readiness-item" id="readyEmail">
+                  <span class="r-icon">✓</span>
+                  <div class="r-text">
+                    <strong>Ticket Emailing</strong>
+                    <small id="readyEmailVal">98% Ready</small>
+                  </div>
+                </div>
+                <div class="readiness-item" id="readySMS">
+                  <span class="r-icon">✓</span>
+                  <div class="r-text">
+                    <strong>SMS Broadcast</strong>
+                    <small id="readySMSVal">100% Ready</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="insight-box">
+              <div class="insight-header">
+                <span class="insight-icon">✦</span>
+                <strong class="insight-title">Quality Insight & Recommendation</strong>
+              </div>
+              <p class="insight-content" id="insight">
+                Run analysis to discover missing fields, invalid contacts and potential duplicate registrations.
+              </p>
+            </div>
+          </section>
+        </div>
+
+        <!-- COMPONENT 3: Interactive Issue Diagnostics Filter Strip -->
+        <section class="component-card diagnostics-strip" id="diagnostics-section">
+          <div class="diagnostics-header">
+            <div class="diagnostics-title-group">
+              <span class="diag-icon">⚡</span>
+              <div>
+                <strong>Issue Diagnostics & Filter Chips</strong>
+                <small>Click any chip to filter records by specific data anomaly</small>
+              </div>
+            </div>
+            <button class="btn-reset-filters" id="resetIssuesBtn" style="display:none">✕ Clear Filter</button>
+          </div>
+
+          <div class="issues-chips-list" id="issuesChipsContainer">
+            <button class="issue-chip active" data-issue="all">
+              <span>All Records</span>
+              <span class="chip-count" id="chip-all-count">—</span>
+            </button>
+            <button class="issue-chip red" data-issue="missing_email">
+              <span>Missing Email</span>
+              <span class="chip-count" id="chip-missing_email-count">—</span>
+            </button>
+            <button class="issue-chip red" data-issue="invalid_email">
+              <span>Invalid Email Syntax</span>
+              <span class="chip-count" id="chip-invalid_email-count">—</span>
+            </button>
+            <button class="issue-chip amber" data-issue="repeated_email">
+              <span>Repeated Email</span>
+              <span class="chip-count" id="chip-repeated_email-count">—</span>
+            </button>
+            <button class="issue-chip amber" data-issue="repeated_person_id">
+              <span>Repeated Person ID</span>
+              <span class="chip-count" id="chip-repeated_person_id-count">—</span>
+            </button>
+            <button class="issue-chip blue" data-issue="similar_name">
+              <span>Fuzzy Name Match</span>
+              <span class="chip-count" id="chip-similar_name-count">—</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- COMPONENT 4: Upgraded Data Explorer Table -->
+        <section class="component-card table-section" id="records">
+          <div class="table-header-bar">
+            <div>
+              <span class="card-eyebrow">ATTENDEE ROSTER</span>
+              <h2 class="card-heading">Registration Records Explorer</h2>
+            </div>
+
+            <!-- Tabs: All / Clean / Review / Invalid -->
+            <div class="table-tabs">
+              <button class="tab-btn active" data-type="all" id="tabAll">
+                <span>All</span>
+                <span class="tab-badge" id="tabAllBadge">0</span>
+              </button>
+              <button class="tab-btn" data-type="clean" id="tabClean">
+                <span>Clean</span>
+                <span class="tab-badge green" id="tabCleanBadge">0</span>
+              </button>
+              <button class="tab-btn" data-type="review" id="tabReview">
+                <span>Needs Review</span>
+                <span class="tab-badge amber" id="tabReviewBadge">0</span>
+              </button>
+              <button class="tab-btn" data-type="invalid" id="tabInvalid">
+                <span>Invalid</span>
+                <span class="tab-badge red" id="tabInvalidBadge">0</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Controls Toolbar -->
+          <div class="table-toolbar">
+            <div class="search-input-wrap">
+              <span class="search-icon">🔍</span>
+              <input id="search" type="text" placeholder="Search by name, email, phone, ID or event…" autocomplete="off">
+              <button class="search-clear-btn" id="searchClearBtn" style="display:none">✕</button>
+            </div>
+
+            <div class="toolbar-right">
+              <div class="select-wrap">
+                <label for="eventSelect" class="select-label">Event:</label>
+                <select id="eventSelect">
+                  <option value="all">All Events</option>
+                  <option value="Tech Symposium">Tech Symposium</option>
+                  <option value="Career Seminar">Career Seminar</option>
+                  <option value="Python Workshop">Python Workshop</option>
+                </select>
+              </div>
+
+              <div class="select-wrap">
+                <label for="pageSizeSelect" class="select-label">Show:</label>
+                <select id="pageSizeSelect">
+                  <option value="15">15 rows</option>
+                  <option value="25" selected>25 rows</option>
+                  <option value="50">50 rows</option>
+                  <option value="100">100 rows</option>
+                  <option value="250">250 rows</option>
+                  <option value="500">500 rows</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Active Filter Pill (if any) -->
+          <div class="active-filter-banner" id="activeFilterBanner" style="display:none">
+            <span class="banner-text">Filtering records by: <strong id="filterBannerText"></strong></span>
+            <button class="btn-clear-banner" id="clearFilterBannerBtn">Clear Filter ✕</button>
+          </div>
+
+          <!-- Responsive Table Wrap -->
+          <div class="table-wrap">
+            <table class="data-table" id="dataTable">
+              <thead>
+                <tr>
+                  <th class="th-reg">REGISTRATION</th>
+                  <th class="th-attendee">ATTENDEE NAME</th>
+                  <th class="th-contact">EMAIL & PHONE</th>
+                  <th class="th-event">EVENT TRACK</th>
+                  <th class="th-issues">QUALITY DIAGNOSIS</th>
+                  <th class="th-status">STATUS</th>
+                  <th class="th-actions">ACTION</th>
+                </tr>
+              </thead>
+              <tbody id="body">
+                <tr>
+                  <td colspan="7" class="empty-state-cell">
+                    <div class="empty-state-box">
+                      <span class="empty-icon">📂</span>
+                      <h3>No records loaded</h3>
+                      <p>Click "Run Quality Audit" above or upload a CSV file to inspect event registrations.</p>
+                      <button class="btn btn-primary btn-sm" id="emptyStateRunBtn">▶ Run Quality Audit</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Table Pagination & Counter -->
+          <div class="table-pagination-footer">
+            <div class="pagination-info" id="tableInfo">No records loaded</div>
+            <div class="pagination-controls" id="paginationControls">
+              <button class="btn-page" id="prevPageBtn" disabled>‹ Previous</button>
+              <div class="page-numbers" id="pageNumbers"></div>
+              <button class="btn-page" id="nextPageBtn" disabled>Next ›</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- COMPONENT 5: Export & Results Center -->
+        <section class="component-card export-section" id="exports">
+          <div class="card-header">
+            <div>
+              <span class="card-eyebrow">DATA EXPORT HUB</span>
+              <h2 class="card-heading">Export Cleaned & Categorized Datasets</h2>
+              <p class="card-description">Download segmented CSV files for each outcome. Original raw data is never mutated.</p>
+            </div>
+            <span class="badge-status-pill purple">Ready for Excel & Ticketing</span>
+          </div>
+
+          <div class="export-cards-grid">
+            
+            <div class="export-card green-border">
+              <div class="export-card-top">
+                <div class="export-icon-box green">✓</div>
+                <div class="export-card-info">
+                  <strong>Clean Registrations</strong>
+                  <small>Valid, unflagged records ready for badge printing and QR ticket delivery.</small>
+                </div>
+              </div>
+              <div class="export-card-bottom">
+                <span class="export-file-meta" id="cleanExportMeta">460 records · CSV</span>
+                <a class="btn-export green" href="/api/download/clean_records.csv" download>
+                  <span>Download Clean CSV</span>
+                  <span class="btn-arrow">↓</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="export-card amber-border">
+              <div class="export-card-top">
+                <div class="export-icon-box amber">⌕</div>
+                <div class="export-card-info">
+                  <strong>Review Queue</strong>
+                  <small>Repeated identifiers and phonetic similarity pairs requiring staff verification.</small>
+                </div>
+              </div>
+              <div class="export-card-bottom">
+                <span class="export-file-meta" id="reviewExportMeta">29 candidates · CSV</span>
+                <a class="btn-export amber" href="/api/download/review_list.csv" download>
+                  <span>Download Review Queue</span>
+                  <span class="btn-arrow">↓</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="export-card red-border">
+              <div class="export-card-top">
+                <div class="export-icon-box red">✕</div>
+                <div class="export-card-info">
+                  <strong>Invalid Records</strong>
+                  <small>Failed RFC email syntax, missing contact info, or corrupted rows.</small>
+                </div>
+              </div>
+              <div class="export-card-bottom">
+                <span class="export-file-meta" id="invalidExportMeta">11 issues · CSV</span>
+                <a class="btn-export red" href="/api/download/invalid_records.csv" download>
+                  <span>Download Invalid CSV</span>
+                  <span class="btn-arrow">↓</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="export-card purple-border">
+              <div class="export-card-top">
+                <div class="export-icon-box purple">{ }</div>
+                <div class="export-card-info">
+                  <strong>Quality Audit Metadata</strong>
+                  <small>Complete JSON summary report with readiness metrics and event breakdowns.</small>
+                </div>
+              </div>
+              <div class="export-card-bottom">
+                <span class="export-file-meta">Audit summary · JSON</span>
+                <a class="btn-export purple" href="/api/download/summary.json" download>
+                  <span>Download Audit JSON</span>
+                  <span class="btn-arrow">↓</span>
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div> <!-- /content-body -->
+
+      <!-- Footer -->
+      <footer class="app-footer">
+        <div class="footer-left">
+          <span>&copy; 2026 DATAWISE &middot; G11 TECH TITANS</span>
+          <span class="footer-divider">&bull;</span>
+          <span>Event Registration Data Quality System</span>
+        </div>
+        <div class="footer-right">
+          <span>Local Python Engine &middot; Privacy Preserving</span>
+        </div>
+      </footer>
+
+    </main>
+
+  </div> <!-- /app-layout -->
+
+  <!-- COMPONENT 6: Record Detail & Duplicate Inspector Modal -->
+  <div class="modal-backdrop" id="recordModal" aria-hidden="true" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-badge-id" id="modalRegId">R0000</span>
+          <div>
+            <h3 class="modal-attendee-name" id="modalFullName">Attendee Details</h3>
+            <span class="modal-sub" id="modalEventName">Event Track</span>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close modal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        
+        <!-- Status Diagnosis Banner -->
+        <div class="modal-status-banner" id="modalStatusBanner">
+          <div class="modal-status-icon" id="modalStatusIcon">✓</div>
+          <div>
+            <strong id="modalStatusTitle">Quality Assessment</strong>
+            <p id="modalStatusDesc">Evaluation details</p>
+          </div>
+        </div>
+
+        <!-- Participant Information Grid -->
+        <div class="modal-details-grid">
+          <div class="modal-field">
+            <label>Registration ID</label>
+            <div class="field-val-wrap">
+              <span class="mono-val" id="modalFieldRegId">—</span>
+              <button class="btn-copy-small" data-copy-target="modalFieldRegId" title="Copy">📋</button>
+            </div>
+          </div>
+
+          <div class="modal-field">
+            <label>Person ID</label>
+            <div class="field-val-wrap">
+              <span class="mono-val" id="modalFieldPersonId">—</span>
+              <button class="btn-copy-small" data-copy-target="modalFieldPersonId" title="Copy">📋</button>
+            </div>
+          </div>
+
+          <div class="modal-field">
+            <label>Email Address</label>
+            <div class="field-val-wrap">
+              <span id="modalFieldEmail">—</span>
+              <button class="btn-copy-small" data-copy-target="modalFieldEmail" title="Copy">📋</button>
+            </div>
+          </div>
+
+          <div class="modal-field">
+            <label>Phone Number</label>
+            <div class="field-val-wrap">
+              <span id="modalFieldPhone">—</span>
+              <button class="btn-copy-small" data-copy-target="modalFieldPhone" title="Copy">📋</button>
+            </div>
+          </div>
+
+          <div class="modal-field full-width">
+            <label>Registered Event</label>
+            <div class="field-val" id="modalFieldEvent">—</div>
+          </div>
+        </div>
+
+        <!-- Issue Diagnosis Details -->
+        <div class="modal-diagnosis-section" id="modalDiagnosisSection">
+          <label class="section-label">DETECTED ANOMALIES & DIAGNOSIS</label>
+          <div class="diagnosis-tags" id="modalDiagnosisTags"></div>
+          <div class="diagnosis-explanation" id="modalDiagnosisExplanation"></div>
+        </div>
+
+        <!-- Recommended Action For Event Organizers -->
+        <div class="modal-recommendation-box" id="modalRecommendationBox">
+          <span class="rec-icon">💡</span>
+          <div>
+            <strong>Recommended Staff Action</strong>
+            <p id="modalRecommendationText">No action needed.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="modalCloseActionBtn">Close</button>
+        <button class="btn btn-primary" id="modalCopyAllBtn">📋 Copy Full Record</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification System -->
+  <div class="toast-container" id="toastContainer">
+    <div class="toast" id="toast">
+      <span class="toast-icon" id="toastIcon">ℹ️</span>
+      <span class="toast-message" id="toastMsg">Notification message</span>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

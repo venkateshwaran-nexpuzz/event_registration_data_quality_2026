@@ -1,0 +1,23 @@
+{
+  "total_records": 0,
+  "valid_records": 0,
+  "invalid_records": 0,
+  "review_records": 0,
+  "clean_records": 0,
+  "similar_name_pairs": 0,
+  "clean_rate": 0,
+  "events": {},
+  "issues": {},
+  "dimensions": {
+    "completeness": 100,
+    "validity": 100,
+    "uniqueness": 100,
+    "consistency": 100.0
+  },
+  "readiness": {
+    "badge_ready": 0,
+    "email_ready": 0,
+    "sms_ready": 0,
+    "duplicate_risk": "Moderate"
+  }
+}
