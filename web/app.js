@@ -806,23 +806,187 @@
     });
   }
 
+  // --- API Client with Status & Content-Type Validation ---
+  function getApiBase() {
+    // 1. Runtime override in localStorage (configured via UI modal)
+    const stored = localStorage.getItem('datawise_backend_url');
+    if (stored && stored.trim()) {
+      return stored.trim().replace(/\/+$/, '');
+    }
+
+    // 2. Global configuration via config.js
+    if (window.DATAWISE_CONFIG && window.DATAWISE_CONFIG.apiBaseUrl && window.DATAWISE_CONFIG.apiBaseUrl.trim()) {
+      return window.DATAWISE_CONFIG.apiBaseUrl.trim().replace(/\/+$/, '');
+    }
+
+    // 3. Fallback for file:// protocol
+    if (window.location.protocol === 'file:') {
+      return 'http://127.0.0.1:8000';
+    }
+
+    // 4. Default: empty string (relative path for local server.py or Netlify /api proxy)
+    return '';
+  }
+
+  function apiUrl(path) {
+    const base = getApiBase();
+    const cleanPath = path.startsWith('/') ? path : `/${path}`;
+    return base ? `${base}${cleanPath}` : cleanPath;
+  }
+
+  function updateBackendStatus(connected, text) {
+    const statusText = $('statusText');
+    const liveDot = $('liveDot');
+    const pill = $('backendStatusPill');
+
+    if (statusText) statusText.textContent = text || (connected ? 'Engine Ready' : 'Backend Offline');
+    if (liveDot) {
+      liveDot.style.background = connected ? '#10b981' : '#ef4444';
+      liveDot.style.boxShadow = connected ? '0 0 10px rgba(16, 185, 129, 0.6)' : '0 0 10px rgba(239, 68, 68, 0.6)';
+    }
+    if (pill) {
+      pill.style.borderColor = connected ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)';
+    }
+  }
+
+  function updateExportLinks() {
+    const exports = [
+      { id: 'downloadCleanBtn', path: '/api/download/clean_records.csv' },
+      { id: 'downloadReviewBtn', path: '/api/download/review_list.csv' },
+      { id: 'downloadInvalidBtn', path: '/api/download/invalid_records.csv' },
+      { id: 'downloadSummaryBtn', path: '/api/download/summary.json' }
+    ];
+    exports.forEach(item => {
+      const el = $(item.id);
+      if (el) {
+        el.href = apiUrl(item.path);
+      }
+    });
+  }
+
+  async function testApiConnection(showToastAlert = false) {
+    const input = $('backendUrlInput');
+    const targetUrl = (input && input.value.trim()) || getApiBase();
+    const cleanUrl = targetUrl ? targetUrl.replace(/\/+$/, '') : '';
+    const testEndpoint = cleanUrl ? `${cleanUrl}/api/summary` : '/api/summary';
+
+    const statusBanner = $('apiStatusBanner');
+    const statusTitle = $('apiStatusTitle');
+    const statusDesc = $('apiStatusDesc');
+    const statusIcon = $('apiStatusIcon');
+
+    if (statusTitle) statusTitle.textContent = 'Testing connection…';
+    if (statusDesc) statusDesc.textContent = `Connecting to ${testEndpoint}…`;
+    if (statusIcon) statusIcon.textContent = '⏳';
+
+    try {
+      const res = await fetch(testEndpoint, { method: 'GET', headers: { Accept: 'application/json' } });
+      const ct = res.headers.get('content-type') || '';
+      if (!res.ok || !ct.includes('application/json')) {
+        const text = (await res.text()).slice(0, 100);
+        throw new Error(`HTTP ${res.status}: ${text || 'Non-JSON response'}`);
+      }
+      const data = await res.json();
+      if (statusBanner) statusBanner.className = 'modal-status-banner green';
+      if (statusTitle) statusTitle.textContent = 'Connection Successful';
+      if (statusDesc) statusDesc.textContent = `Connected to Python backend. Summary status: ${data.total_records !== undefined ? `${data.total_records} records` : 'Ready'}.`;
+      if (statusIcon) statusIcon.textContent = '✓';
+      updateBackendStatus(true, 'Engine Connected');
+      if (showToastAlert) showToast('Backend connection verified successfully!', 'success');
+    } catch (e) {
+      if (statusBanner) statusBanner.className = 'modal-status-banner red';
+      if (statusTitle) statusTitle.textContent = 'Connection Failed';
+      if (statusDesc) statusDesc.textContent = `Could not reach Python API: ${e.message}`;
+      if (statusIcon) statusIcon.textContent = '✕';
+      updateBackendStatus(false, 'Backend Offline');
+      if (showToastAlert) showToast(`Connection failed: ${e.message}`, 'error');
+    }
+  }
+
+  async function apiFetch(path, options = {}) {
+    const url = apiUrl(path);
+    const headers = {
+      Accept: 'application/json',
+      ...(options.headers || {})
+    };
+
+    let res;
+    try {
+      res = await fetch(url, { ...options, headers });
+    } catch (netErr) {
+      updateBackendStatus(false, 'Backend Offline');
+      const isNetlify = window.location.hostname.includes('netlify.app');
+      let msg = `Cannot connect to backend API at ${url}. `;
+      if (isNetlify) {
+        msg += 'Please configure your deployed Python backend URL via the Backend Settings pill in the top header.';
+      } else {
+        msg += 'Ensure "py server.py" is running at http://127.0.0.1:8000.';
+      }
+      throw new Error(msg);
+    }
+
+    const contentType = res.headers.get('content-type') || '';
+    const isJson = contentType.includes('application/json');
+
+    let data = null;
+    if (isJson) {
+      try {
+        data = await res.json();
+      } catch (parseErr) {
+        throw new Error(`Invalid JSON received from ${path}: ${parseErr.message}`);
+      }
+    } else {
+      const text = await res.text();
+      const cleanSnippet = text.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 120);
+      const isNetlify = window.location.hostname.includes('netlify.app');
+
+      if (!res.ok) {
+        let hint = '';
+        if (isNetlify && (res.status === 400 || res.status === 404 || res.status === 405)) {
+          hint = ' (Netlify static host cannot run Python endpoints. Set your deployed backend URL in Backend Settings).';
+        }
+        throw new Error(`HTTP ${res.status} (${res.statusText || 'Error'}): ${cleanSnippet || 'Non-JSON response'}${hint}`);
+      }
+      throw new Error(`Expected JSON from ${path}, received "${contentType || 'text'}": ${cleanSnippet}`);
+    }
+
+    if (!res.ok) {
+      const errMsg = (data && (data.error || data.message)) || `HTTP ${res.status} Error`;
+      throw new Error(errMsg);
+    }
+
+    if (data && data.ok === false) {
+      throw new Error(data.error || data.message || 'Operation returned failure');
+    }
+
+    updateBackendStatus(true, 'Engine Ready');
+    return data;
+  }
+
   // --- Data Loading & Analysis Fetch ---
   async function loadData() {
     try {
       // 1. Fetch Summary
-      const sumRes = await fetch('/api/summary');
-      let sumData = await sumRes.json();
+      let sumData = await apiFetch('/api/summary');
 
-      // 2. Fetch Records: Fetch all records up to 50000 without artificial caps
-      let cleanRes = await fetch('/api/records?type=clean&limit=50000').then(r => r.json()).catch(() => ({ rows: [] }));
-      let reviewRes = await fetch('/api/records?type=review&limit=50000').then(r => r.json()).catch(() => ({ rows: [] }));
-      let invalidRes = await fetch('/api/records?type=invalid&limit=50000').then(r => r.json()).catch(() => ({ rows: [] }));
+      // 2. Fetch Records: Try /api/records?type=all first, fallback to individual types
+      let allRows = [];
+      try {
+        const recordsRes = await apiFetch('/api/records?type=all&limit=50000');
+        allRows = recordsRes.rows || [];
+      } catch (recErr) {
+        const [cleanRes, reviewRes, invalidRes] = await Promise.all([
+          apiFetch('/api/records?type=clean&limit=50000').catch(() => ({ rows: [] })),
+          apiFetch('/api/records?type=review&limit=50000').catch(() => ({ rows: [] })),
+          apiFetch('/api/records?type=invalid&limit=50000').catch(() => ({ rows: [] }))
+        ]);
+        const cleanRows = (cleanRes.rows || []).map(r => ({ ...r, _status: 'clean' }));
+        const reviewRows = (reviewRes.rows || []).map(r => ({ ...r, _status: 'review' }));
+        const invalidRows = (invalidRes.rows || []).map(r => ({ ...r, _status: 'invalid' }));
+        allRows = [...cleanRows, ...reviewRows, ...invalidRows];
+      }
 
-      const cleanRows = (cleanRes.rows || []).map(r => ({ ...r, _status: 'clean' }));
-      const reviewRows = (reviewRes.rows || []).map(r => ({ ...r, _status: 'review' }));
-      const invalidRows = (invalidRes.rows || []).map(r => ({ ...r, _status: 'invalid' }));
-
-      state.allRecords = [...cleanRows, ...reviewRows, ...invalidRows];
+      state.allRecords = allRows;
 
       // Merge server summary with client metrics safely without overwriting real totals
       if (sumData && sumData.total_records !== undefined) {
@@ -843,22 +1007,30 @@
       state.summary = sumData;
       updateDashboard(sumData);
       applyFiltersAndRender();
+      updateExportLinks();
+      updateBackendStatus(true, 'Engine Ready');
     } catch (err) {
       console.error('Data load error:', err);
-      showToast('Could not load registration data', 'error');
+      updateBackendStatus(false, 'Backend Offline');
+      showToast(err.message, 'error');
     }
   }
 
   async function loadSample(type) {
     const btn = $('sample320Btn');
     if (btn) btn.disabled = true;
-    showToast('Loading 320 uploaded dataset…', 'info');
+    showToast(`Loading ${type} dataset…`, 'info');
     try {
-      const res = await fetch(`/api/load_sample?type=${type}`, { method: 'POST' });
-      const data = await res.json();
-      if (!res.ok || !data.ok) throw new Error(data.error || 'Failed to load sample');
+      const data = await apiFetch(`/api/load_sample?type=${type}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type })
+      });
       await loadData();
-      showToast(`✓ Loaded ${data.summary.total_records.toLocaleString()} records successfully!`, 'success');
+      const count = data.summary && data.summary.total_records !== undefined
+        ? data.summary.total_records.toLocaleString()
+        : '320';
+      showToast(`✓ Loaded ${count} records successfully!`, 'success');
     } catch (err) {
       showToast('Sample error: ' + err.message, 'error');
     } finally {
@@ -871,13 +1043,15 @@
     if (btn) btn.disabled = true;
     showToast('Clearing registration records…', 'info');
     try {
-      const res = await fetch('/api/clear', { method: 'POST' });
-      const data = await res.json();
-      if (!res.ok || !data.ok) throw new Error(data.error || 'Failed to clear records');
+      const data = await apiFetch('/api/clear', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
       state.allRecords = [];
       state.summary = data.summary;
       updateDashboard(data.summary);
       applyFiltersAndRender();
+      updateExportLinks();
       showToast('✓ All records cleared. Upload a CSV to begin.', 'success');
     } catch (err) {
       showToast('Clear error: ' + err.message, 'error');
@@ -897,9 +1071,10 @@
 
     try {
       showToast('Processing registrations & checking duplicate identities…', 'info');
-      const res = await fetch('/api/process', { method: 'POST' });
-      const data = await res.json();
-      if (!res.ok || !data.ok) throw new Error(data.error || 'Audit process failed');
+      await apiFetch('/api/process', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
 
       await loadData();
       showToast('Quality audit complete! All metrics & exports updated.', 'success');
@@ -1066,15 +1241,13 @@ R0003,P0003,Aarav Sharma,aarav.sharma@example.com,9553035110,Python Workshop`;
 
       showToast(`Uploading ${count} records with mapped columns…`, 'info');
 
-      const res = await fetch('/api/upload', {
+      const data = await apiFetch('/api/upload', {
         method: 'POST',
         headers: { 'Content-Type': 'text/csv;charset=utf-8' },
         body: csvContent
       });
-      const data = await res.json();
-      if (!res.ok || data.error) throw new Error(data.error || 'Upload failed');
 
-      showToast(`✓ Uploaded & audited ${data.uploaded} records successfully!`, 'success');
+      showToast(`✓ Uploaded & audited ${data.uploaded || count} records successfully!`, 'success');
       await loadData();
     } catch (err) {
       showToast('Upload error: ' + err.message, 'error');
@@ -1103,8 +1276,75 @@ R0003,P0003,Aarav Sharma,aarav.sharma@example.com,9553035110,Python Workshop`;
     if (emptyStateRunBtn) emptyStateRunBtn.addEventListener('click', runAudit);
     if (clearBtn) clearBtn.addEventListener('click', clearRecords);
     if (sample320Btn) sample320Btn.addEventListener('click', () => loadSample('320'));
-    if (sampleBtn) sampleBtn.addEventListener('click', runAudit);
+    if (sampleBtn) sampleBtn.addEventListener('click', () => loadSample('320'));
     if (templateBtn) templateBtn.addEventListener('click', downloadTemplate);
+
+    // Backend API Settings Modal Handlers
+    const statusPill = $('backendStatusPill');
+    const apiModal = $('apiModal');
+    const apiModalCloseBtn = $('apiModalCloseBtn');
+    const backendUrlInput = $('backendUrlInput');
+    const apiTestBtn = $('apiTestBtn');
+    const apiSaveBtn = $('apiSaveBtn');
+    const apiResetLocalBtn = $('apiResetLocalBtn');
+
+    if (statusPill && apiModal) {
+      statusPill.addEventListener('click', () => {
+        if (backendUrlInput) {
+          backendUrlInput.value = localStorage.getItem('datawise_backend_url') || (window.DATAWISE_CONFIG?.apiBaseUrl || '');
+        }
+        testApiConnection(false);
+        apiModal.classList.add('open');
+        apiModal.setAttribute('aria-hidden', 'false');
+      });
+    }
+
+    function closeApiModal() {
+      if (apiModal) {
+        apiModal.classList.remove('open');
+        apiModal.setAttribute('aria-hidden', 'true');
+      }
+    }
+
+    if (apiModalCloseBtn) {
+      apiModalCloseBtn.addEventListener('click', closeApiModal);
+    }
+
+    if (apiModal) {
+      apiModal.addEventListener('click', e => {
+        if (e.target === apiModal) closeApiModal();
+      });
+    }
+
+    if (apiTestBtn) {
+      apiTestBtn.addEventListener('click', () => testApiConnection(true));
+    }
+
+    if (apiSaveBtn) {
+      apiSaveBtn.addEventListener('click', async () => {
+        const val = backendUrlInput ? backendUrlInput.value.trim() : '';
+        if (val) {
+          localStorage.setItem('datawise_backend_url', val);
+          showToast(`Backend API configured to ${val}`, 'success');
+        } else {
+          localStorage.removeItem('datawise_backend_url');
+          showToast('Using default / relative API URL', 'info');
+        }
+        closeApiModal();
+        await loadData();
+      });
+    }
+
+    if (apiResetLocalBtn) {
+      apiResetLocalBtn.addEventListener('click', async () => {
+        localStorage.removeItem('datawise_backend_url');
+        if (backendUrlInput) backendUrlInput.value = '';
+        if (window.DATAWISE_CONFIG) window.DATAWISE_CONFIG.apiBaseUrl = '';
+        showToast('Reset to Localhost (http://127.0.0.1:8000)', 'info');
+        closeApiModal();
+        await loadData();
+      });
+    }
 
     // File Upload input
     const fileInput = $('file');

@@ -1,1 +1,9 @@
-registration_id,person_id,full_name,email,phone,event_name
+registration_id,person_id,full_name,email,phone,event_name,validation_issues,review_reason
+REG1001,P0001,Arun Kumar,arun.kumar@example.com,9876543210,Python Workshop,,repeated_email;repeated_full_name;repeated_phone
+REG1006,P0006,Meena Devi,meena.devi@example.com,9555566666,AI Seminar,,repeated_full_name
+REG1011,P0011,Arun Kumar,arun.kumar@example.com,9876543210,Python Workshop,,repeated_email;repeated_full_name;repeated_phone
+REG00034,P0034,Kavin Raj,kavin.raj0034@example.com,9000000034,Cybersecurity Talk,,repeated_email
+REG00035,P0035,Keerthana Kannan,kavin.raj0034@example.com,9000000035,Cloud Computing,,repeated_email
+REG00037,P0037,Lavanya Sharma,lavanya.sharma0037@example.com,9000000037,AI Seminar,,repeated_full_name
+REG00038,P0038,Lavanya Sharma,madhan.anand0038@example.com,9000000038,Data Science Bootcamp,,repeated_full_name
+REG00169,P0169,Meena Devi,meena.devi0169@example.com,9000000169,Cybersecurity Talk,,repeated_full_name

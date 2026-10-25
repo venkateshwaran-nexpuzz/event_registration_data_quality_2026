@@ -100,9 +100,9 @@
         </div>
 
         <div class="header-right">
-          <div class="system-status-pill">
-            <span class="live-dot"></span>
-            <span class="status-text">Engine Ready</span>
+          <div class="system-status-pill" id="backendStatusPill" title="Click to configure Python Backend API" style="cursor: pointer;">
+            <span class="live-dot" id="liveDot"></span>
+            <span class="status-text" id="statusText">Engine Ready</span>
           </div>
 
           <!-- Header Theme Switcher -->
@@ -632,7 +632,7 @@
               </div>
               <div class="export-card-bottom">
                 <span class="export-file-meta" id="cleanExportMeta">460 records · CSV</span>
-                <a class="btn-export green" href="/api/download/clean_records.csv" download>
+                <a class="btn-export green" id="downloadCleanBtn" href="/api/download/clean_records.csv" download>
                   <span>Download Clean CSV</span>
                   <span class="btn-arrow">↓</span>
                 </a>
@@ -649,7 +649,7 @@
               </div>
               <div class="export-card-bottom">
                 <span class="export-file-meta" id="reviewExportMeta">29 candidates · CSV</span>
-                <a class="btn-export amber" href="/api/download/review_list.csv" download>
+                <a class="btn-export amber" id="downloadReviewBtn" href="/api/download/review_list.csv" download>
                   <span>Download Review Queue</span>
                   <span class="btn-arrow">↓</span>
                 </a>
@@ -666,7 +666,7 @@
               </div>
               <div class="export-card-bottom">
                 <span class="export-file-meta" id="invalidExportMeta">11 issues · CSV</span>
-                <a class="btn-export red" href="/api/download/invalid_records.csv" download>
+                <a class="btn-export red" id="downloadInvalidBtn" href="/api/download/invalid_records.csv" download>
                   <span>Download Invalid CSV</span>
                   <span class="btn-arrow">↓</span>
                 </a>
@@ -683,7 +683,7 @@
               </div>
               <div class="export-card-bottom">
                 <span class="export-file-meta">Audit summary · JSON</span>
-                <a class="btn-export purple" href="/api/download/summary.json" download>
+                <a class="btn-export purple" id="downloadSummaryBtn" href="/api/download/summary.json" download>
                   <span>Download Audit JSON</span>
                   <span class="btn-arrow">↓</span>
                 </a>
@@ -809,6 +809,49 @@
     </div>
   </div>
 
-  <script src="/app.js"></script>
+  <!-- Backend API Settings Modal -->
+  <div class="modal-backdrop" id="apiModal" aria-hidden="true" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-badge-id" style="background:#6366f1; color:#fff;">API</span>
+          <div>
+            <h3 class="modal-attendee-name">Backend Engine Settings</h3>
+            <span class="modal-sub">Configure Python Server URL</span>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="apiModalCloseBtn" aria-label="Close modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-status-banner" id="apiStatusBanner">
+          <div class="modal-status-icon" id="apiStatusIcon">ℹ️</div>
+          <div>
+            <strong id="apiStatusTitle">Connection Status</strong>
+            <p id="apiStatusDesc" style="margin:4px 0 0; font-size:13px;">Checking engine connection...</p>
+          </div>
+        </div>
+        <div style="margin-top: 16px;">
+          <label style="display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-muted); margin-bottom:8px;">
+            Python Backend URL
+          </label>
+          <input type="url" id="backendUrlInput" placeholder="http://127.0.0.1:8000 (Local) or https://datawise-backend.onrender.com" style="width:100%; padding:10px 14px; background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:8px; color:var(--text-main); font-family:var(--font-mono); font-size:13px; box-sizing:border-box;">
+          <small style="display:block; margin-top:8px; color:var(--text-muted); font-size:12px; line-height:1.5;">
+            • <strong>Local Mode:</strong> Leave blank or use <code>http://127.0.0.1:8000</code>.<br>
+            • <strong>Netlify Mode:</strong> Set your deployed Python backend URL (e.g. on Render, Railway, Fly.io).
+          </small>
+        </div>
+      </div>
+      <div class="modal-footer" style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+        <button class="btn btn-secondary" id="apiResetLocalBtn" style="font-size:12px;">Reset to Local</button>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-secondary" id="apiTestBtn">Test Connection</button>
+          <button class="btn btn-primary" id="apiSaveBtn">Save &amp; Connect</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

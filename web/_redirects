@@ -1,0 +1,3 @@
+# Netlify API Proxy and SPA Redirects
+/api/*  https://datawise-backend.onrender.com/api/:splat  200
+/*      /index.html                                       200

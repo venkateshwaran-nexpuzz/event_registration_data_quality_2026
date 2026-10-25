@@ -1,0 +1,17 @@
+[build]
+  publish = "web"
+
+# Proxy /api requests to the separately deployed Python backend.
+# Replace the URL below with your actual deployed backend URL (e.g. Render, Railway, Fly.io, AWS, etc.)
+# If apiBaseUrl is configured in web/config.js, frontend will call it directly via CORS.
+# If apiBaseUrl is empty, Netlify will proxy /api/* requests to this backend URL.
+[[redirects]]
+  from = "/api/*"
+  to = "https://datawise-backend.onrender.com/api/:splat"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

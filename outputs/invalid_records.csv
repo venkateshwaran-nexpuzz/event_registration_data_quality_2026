@@ -1,1 +1,7 @@
-registration_id,person_id,full_name,email,phone,event_name
+registration_id,person_id,full_name,email,phone,event_name,validation_issues
+REG1012,P0012,,empty.name@example.com,9222233333,AI Seminar,missing_full_name
+REG1013,P0013,Vijay T,vijay.example.com,9333344444,Cloud Computing,invalid_email
+REG1014,P0014,Anitha S,anitha.s@example.com,12345,Python Workshop,invalid_phone
+REG00026,P0026,Deepika Prakash,not-an-email,9000000026,Python Workshop,invalid_email
+REG00029,P0029,,gokul.devi0029@example.com,9000000029,Cybersecurity Talk,missing_full_name
+REG00032,P0032,Iniya Mohan,iniya.mohan0032@example.com,123,AI Seminar,invalid_phone
